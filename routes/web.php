@@ -1,16 +1,17 @@
 <?php
 
-use App\Http\Controllers\Admin\CandidateController;
-use App\Http\Controllers\Admin\DownloadController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\RaDocumentController;
 use App\Http\Controllers\Admin\FeDocumentController;
 use App\Http\Controllers\Admin\WebsiteSettingController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Admin\UserPassportController;
+use App\Http\Controllers\Admin\DealerController;
+use App\Http\Controllers\Admin\CarController;
+use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\BrandController;
+use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\HomeController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
@@ -24,12 +25,7 @@ Route::get('cache-flush', static function () {
     Artisan::call('config:clear');
     Artisan::call('cache:clear');
     Artisan::call('optimize:clear');
-
-    // mPDF JSON cache clear
-    $mpdfCachePath = storage_path('app/mpdf');
-    if (File::exists($mpdfCachePath)) {
-        File::cleanDirectory($mpdfCachePath);
-    }
+    
    return redirect()->back()->with('success', 'Cache cleared successfully!');
 });
 
@@ -54,10 +50,13 @@ Route::middleware(['web','auth'])->group(function () {
     Route::resources([
         'roles' => RoleController::class,
         'user' => UserController::class,
-        'ra-document' => RaDocumentController::class,
-        'fe-document' => FeDocumentController::class,
-        'user-passports' => UserPassportController::class,
-        'candidate_form' => CandidateController::class
+        'dealers' => DealerController::class,       
+        'cars' => CarController::class,   
+        'blog' => BlogController::class,
+        'brand' => BrandController::class,  
+        'banner' => BannerController::class,  
+        
+        
     ]);
     Route::get('/user/{id}/edit', [UserController::class, 'edit'])->name('user.edit');
     Route::get('/edit-profile', [UserController::class, 'editProfile'])->name('user.editProfile');
@@ -65,21 +64,25 @@ Route::middleware(['web','auth'])->group(function () {
     //User
     Route::post('user/status', [UserController::class, 'changeStatus'])->name('user.status');
 
-    //Ra-document
-    Route::get('/ra-document/{id}/edit', [RaDocumentController::class, 'edit'])->name('ra-document.edit');
-    Route::post('ra-document/status', [RaDocumentController::class, 'changeStatus'])->name('ra-document.status');
+    //cars
+    Route::post('cars/store-or-update/{id?}', [CarController::class, 'storeOrUpdate'])->name('cars.storeOrUpdate');
+    Route::post('cars/status', [CarController::class, 'changeStatus'])->name('cars.status');
+    
+    //Brand
+    Route::get('/brand/{id}/edit', [BrandController::class, 'edit'])->name('brand.edit');
+    Route::post('brand/status', [BrandController::class, 'changeStatus'])->name('brand.status');
 
-    //fe-document
-    Route::get('/fe-document/{id}/edit', [FeDocumentController::class, 'edit'])->name('fe-document.edit');
-    Route::post('fe-document/status', [FeDocumentController::class, 'changeStatus'])->name('fe-document.status');
+    //dealers
+    Route::post('dealers/store-or-update/{id?}', [DealerController::class, 'storeOrUpdate'])->name('dealers.storeOrUpdate');
+    Route::post('dealers/status', [DealerController::class, 'changeStatus'])->name('dealers.status');
+    
 
-    //user-passports
-    Route::post('user-passports/store-or-update/{id?}', [UserPassportController::class, 'storeOrUpdate'])->name('user_passports.storeOrUpdate');
-    Route::post('/check-passport', [UserPassportController::class, 'checkPassport'])->name('check.passport');
-    Route::post('/check-fe-details', [UserPassportController::class, 'checkFeDetails'])->name('check.fe.details');
 
-    Route::post('user-passports/status', [UserPassportController::class, 'changeStatus'])->name('user-passports.status');
-    Route::post('get_passport_info', [UserPassportController::class, 'getPassportInfo'])->name('get_passport_info');
+    //Banner
+    Route::post('banner/status', [BannerController::class, 'changeStatus'])->name('banner.status');
+
+
+
 
     // Change Password
     Route::post('/change-password', [AdminController::class, 'changePassword'])->name('change-password');
@@ -93,12 +96,16 @@ Route::middleware(['web','auth'])->group(function () {
     Route::get('/setting', [WebsiteSettingController::class, 'ViewWebsiteSettingPage'])->name('setting');
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-    Route::post('candidate_form/status', [CandidateController::class, 'changeStatus'])->name('candidate_form.status');
-    Route::get('/admin/download', [DownloadController::class, 'downloadPdf'])->name('download');
-    Route::get('/admin/pdf_download/{type}/{id}', [DownloadController::class, 'pdfDownload']);
+   
+   
+
+Route::get('/seo-link',[BlogController::class, 'seolink']);  
+Route::post('blog/status', [BlogController::class, 'changeStatus'])->name('blog.status');
+    
+
     Route::get('/log-activity', [WebsiteSettingController::class, 'logActivity'])->name('log-activity');
     Route::get('/log-error', [WebsiteSettingController::class, 'showLogsPage'])->name('log-error');
 
-    Route::get('/uploaded_document/{id}', [CandidateController::class, 'uploadedDocument'])->name('candidate_form.uploaded_document');
+   
 
 });

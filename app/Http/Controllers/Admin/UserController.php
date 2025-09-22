@@ -25,7 +25,7 @@ class UserController extends Controller
         $authUser = auth()->user();
         $authId   = $authUser->id;
 
-        $data['roles'] = Role::where('id', '!=', 1)->get();
+        $data['roles'] = Role::where('id', '!=', 4)->get();
         // $data['roles'] = Role::get();
 
         $query = User::with(['role', 'createdBy'])
@@ -376,8 +376,11 @@ class UserController extends Controller
             $user->status = $newStatus;
             $user->save();
 
+            $message = ($user->role_id == 4) 
+    ? 'Dealer status updated successfully.' 
+    : 'User status updated successfully.';
             return response()->json([
-                'message' => 'User status updated successfully.',
+                'message' => $message,
                 'newStatus' => $newStatus,
                 'icon' => $newStatus === 'active' ? 'fa-user-slash' : 'fa-user-check',
                 'title' => $newStatus === 'active' ? 'Make Inactive' : 'Make Active',

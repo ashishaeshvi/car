@@ -3,7 +3,7 @@ $role_id = auth()->user()->role_id;
 @endphp
 <aside class="main-sidebar sidebar-dark-primary elevation-3">
     <a href="javascript:void(0);" class="brand-link d-flex justify-content-center align-items-center">
-        <span class="brand-text font-weight-bold">{{ getWebsiteSetting('company_name') ?? 'Tajir Travels' }}
+        <span class="brand-text font-weight-bold">{{ getWebsiteSetting('company_name') ?? 'Car ke Malik' }}
         </span>
     </a>
     <div class="sidebar">
@@ -46,77 +46,52 @@ $role_id = auth()->user()->role_id;
                 </li>
                 @endif
 
-                @canany(['ra-document.view', 'fe-document.view'])
-                <li
-                    class="nav-item has-treeview {{ Route::currentRouteName() == 'ra-document.index' || Route::currentRouteName() == 'fe-document.index' ? 'menu-open' : '' }}">
-                    <a href="#"
-                        class="nav-link {{ Route::currentRouteName() == 'ra-document.index' || Route::currentRouteName() == 'fe-document.index' ? 'active' : '' }}">
-                        <i class="nav-icon fa fa-file-alt"></i>
-                        <p>
-                            RA & FE Details
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
 
-                        @can('ra-document.view')
-                        <li class="nav-item">
-                            <a href="{{ url('ra-document') }}"
-                                class="nav-link  {{ Route::currentRouteName() == 'ra-document.index' ? 'active' : '' }}">
-                                <i class="nav-icon fa fa-stamp"></i>
-                                <p>RA Sign & Stamp</p>
-                            </a>
-                        </li>
-                        @endif
-                        @can('fe-document.view')
-                        <li class="nav-item">
-                            <a href="{{ url('fe-document?type=sign') }}"
-                                class="nav-link {{ request('type') === 'sign' ? 'active' : '' }}">
-                                <i class="nav-icon fa fa-pen-nib"></i>
-                                <p>Fe Sign</p>
-                            </a>
-                        </li>
-                        @endif
-                        @can('fe-document.view')
-                        <li class="nav-item">
-                            <a href="{{ url('fe-document?type=stamp') }}"
-                                class="nav-link {{ request('type') === 'stamp' ? 'active' : '' }}">
-                                <i class="nav-icon fa fa-certificate"></i>
-                                <p>Fe Stamp</p>
-                            </a>
-                        </li>
-                        @endif
-                    </ul>
-                </li>
-                @endcanany
-
-                @can('user-passport.view')
+                @can('brand.view')
                 <li class="nav-item">
-                    <a href="{{ route('user-passports.index') }}"
-                        class="nav-link {{ Route::currentRouteName() == 'user-passports.index' ? 'active' : '' }}">
+                    <a href="{{ url('brand') }}"
+                        class="nav-link {{ Route::currentRouteName() == 'brand.index' ? 'active' : '' }}">
+                        <i class="nav-icon fa fa-users"></i>
+                        <p>Brands</p>
+                    </a>
+                </li>
+                @endif
+
+
+               
+
+                @can('dealer.view')
+                <li class="nav-item">
+                    <a href="{{ route('dealers.index') }}"
+                        class="nav-link {{ Route::currentRouteName() == 'dealers.index' ? 'active' : '' }}">
                         <i class="nav-icon fa fa-upload"></i>
-                        <p>Document Upload</p>
+                        <p>Manage Dealer</p>
                     </a>
                 </li>
                 @endcan
 
-                @can('candidate-form.view')
+
+                  @can('cars.view')
                 <li class="nav-item">
-                    <a href="{{ route('candidate_form.index') }}"
-                        class="nav-link {{ Route::currentRouteName() == 'candidate_form.index' ? 'active' : '' }}">
-                        <i class="nav-icon fa fa-user-clock"></i>
-                        <p>Offline & Online</p>
+                    <a href="{{ route('cars.index') }}"
+                        class="nav-link {{ Route::currentRouteName() == 'cars.index' ? 'active' : '' }}">
+                        <i class="nav-icon fa fa-upload"></i>
+                        <p>Manage Cars</p>
                     </a>
                 </li>
                 @endcan
 
-                <li class="nav-item d-none">
-                    <a href="{{ route('download') }}"
-                        class="nav-link {{ Route::currentRouteName() == 'download' ? 'active' : '' }}">
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>Download</p>
+               
+                @can('blogs.view')
+                <li class="nav-item">
+                    <a href="{{ route('blog.index') }}"
+                        class="nav-link {{ Route::currentRouteName() == 'blog.index' ? 'active' : '' }}">
+                        <i class="nav-icon fa fa-upload"></i>
+                        <p>Manage Blog</p>
                     </a>
                 </li>
+               @endcan
+              
 
 
                 @canany(['change-password.edit'])
@@ -146,6 +121,17 @@ $role_id = auth()->user()->role_id;
                                 <p>Website Setting</p>
                             </a>
                         </li>
+
+
+                         @can('banner.view')
+                <li class="nav-item">
+                    <a href="{{ url('banner') }}"
+                        class="nav-link {{ Route::currentRouteName() == 'banner.index' ? 'active' : '' }}">
+                        <i class="nav-icon fa fa-users"></i>
+                        <p>Home Page Banner</p>
+                    </a>
+                </li>
+                @endif
                     </ul>
                 </li>
                 @endif

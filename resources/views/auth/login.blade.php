@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>Tajir Travels</title>
+  <title>CarkeMalik</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="base-url" content="{{ url('/') }}">
   <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -102,7 +102,7 @@
       <div class="card-body p-0">
         <div class="bg-primary text-center p-3">
           <a class="text-white" href="{{ url('login') }}">
-            <h4 class="mb-0 pb-0"><strong>{{ getWebsiteSetting('company_name') ?? 'Globe Travels' }}</strong></h4>
+            <h4 class="mb-0 pb-0"><strong>{{ getWebsiteSetting('company_name') ?? 'Car ke Malik' }}</strong></h4>
           </a>
         </div>
         <div class="text-center w-70 m-auto">

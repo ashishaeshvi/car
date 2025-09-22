@@ -20,7 +20,10 @@ return new class extends Migration
             $table->string('password');
             $table->string('mobile', 15)->nullable();
             $table->string('address', 200)->nullable();
+            $table->string('city')->nullable();
+            $table->string('pincode')->nullable();
             $table->string('id_proof')->nullable();
+            $table->string('dealer_type')->nullable();            
             $table->string('profile_image')->nullable();
             $table->foreignId('added_by')->nullable()->constrained('users')->onDelete('set null');
             $table->enum('status', ['active', 'inactive'])->default('active');

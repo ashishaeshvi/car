@@ -33,27 +33,8 @@ class AdminController extends Controller
                 ->whereNull('deleted_at')
                 ->count(),
 
-            'fe_stamp_counts' => FeDocument::where('type', 'stamp')
-                ->whereNull('deleted_at')
-                ->when(!$isAdmin, $filterByUser)
-                ->count(),
+            
 
-            'fe_sign_counts' => FeDocument::where('type', 'sign')
-                ->whereNull('deleted_at')
-                ->when(!$isAdmin, $filterByUser)
-                ->count(),
-
-            'ra_counts' => RaDocument::whereNull('deleted_at')
-                ->when(!$isAdmin, $filterByUser)
-                ->count(),
-
-            'document_upload_panel_counts' => UserPassport::whereNull('deleted_at')
-                ->when(!$isAdmin, $filterByUser)
-                ->count(),
-
-            'offline_online_staff_counts' => Candidate::whereNull('deleted_at')
-                ->when(!$isAdmin, $filterByUser)
-                ->count(),
 
             'user_counts' => User::where('role_id', 3)
                 ->whereNull('deleted_at')

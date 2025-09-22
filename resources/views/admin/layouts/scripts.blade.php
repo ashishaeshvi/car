@@ -15,7 +15,7 @@
 <script src="{{ asset('admin-assets/plugins/bs-custom-file-input/bs-custom-file-input.min.js')}}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.10.111/pdf.min.js"></script>
 <script src="https://unpkg.com/@panzoom/panzoom/dist/panzoom.min.js"></script>
-
+  <script src="{{ asset('admin-assets/ckeditor/ckeditor.js')}}"></script>
 </script>
 <script type="text/javascript">
   $(function() {
@@ -57,6 +57,21 @@
     }).showToast();
     @endif
   });
+
+  @if ($errors->any())
+   
+        @foreach ($errors->all() as $error)
+            Toastify({
+                text: "{{ $error }}",
+                duration: 4000,
+                close: true,
+                gravity: "top", // top or bottom
+                position: "right", // left, center or right
+                backgroundColor: "#f44336",
+            }).showToast();
+        @endforeach
+   
+@endif
 
   function myFunction() {
     setTimeout(showPage, 50);

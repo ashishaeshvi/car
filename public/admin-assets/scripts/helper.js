@@ -183,3 +183,40 @@ $('[data-clicktodisabled]').on('click', function(e) {
         $(this).attr('disabled', false);
     }, 5000);
 });
+
+
+function MakeSeoNameLink() {  
+    var title=  $("#title").val(); 
+    MakeSeoWebLink(title);
+}
+function MakeSeoWebLink(seolink) {  
+  var _url=  $('#_url').val();  
+    var seolink = $.trim(seolink);
+    var seolink= seolink.replace(/[^a-z0-9\s]/gi, '').replace(/[_\s]/g, '-')
+    $.ajax({
+        type: "GET",
+        url: _url+"/seo-link",
+        data: "seolink=" + seolink  + "&action=make_seolink",
+        success: function (data) {
+            var data_val=  $.trim(data);
+           // var seolink=  $("#memorial-uri").val();
+            $("#slug_uri").val(data_val);
+        }
+    });
+}
+    
+function MakeSeoLink(seolink) {  
+  var _url=  $('#_url').val();  
+    var seolink = $.trim(seolink);
+    var seolink= seolink.replace(/[^a-z0-9\s-]/gi, '').replace(/[_\s]/g, '-')
+    $.ajax({
+        type: "GET",
+        url: _url+"/seo-link",
+        data: "seolink=" + seolink  + "&action=make_seolink",
+        success: function (data) {
+            var data_val=  $.trim(data);
+            $("#slug_uri").val(data_val);
+        }
+    });
+
+}

@@ -6,6 +6,10 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Mpdf\Mpdf;
 
+use Intervention\Image\Facades\Image;
+use Illuminate\Support\Str;
+
+
 if (!function_exists('getWebsiteSetting')) {
     function getWebsiteSetting($key = null)
     {
@@ -67,6 +71,38 @@ if (!function_exists('uploadFiles')) {
     }
 }
 
+if (!function_exists('uploadWebpImage')) {
+    function uploadWebpImage($files, string $folder = 'images', bool $multiple = false, $oldFile = null, int $quality = 90)
+    {
+        if (!$multiple) {
+            // Delete old file if exists
+            if ($oldFile && Storage::disk('public')->exists($oldFile)) {
+                Storage::disk('public')->delete($oldFile);
+            }
+
+            $filename = Str::uuid() . '.webp';
+            
+            // For Intervention Image v2 (most compatible)
+            $image = Image::make($files)->encode('webp', $quality);
+            
+            Storage::disk('public')->put("{$folder}/{$filename}", (string) $image);
+
+            return "{$folder}/{$filename}";
+        } else {
+            // Multiple files
+            $paths = [];
+            foreach ($files as $file) {
+                $filename = Str::uuid() . '.webp';
+                
+                $image = Image::make($file)->encode('webp', $quality);
+                
+                Storage::disk('public')->put("{$folder}/{$filename}", (string) $image);
+                $paths[] = "{$folder}/{$filename}";
+            }
+            return $paths;
+        }
+    }
+}
 if (!function_exists('deleteFiles')) {
     function deleteFiles($fileName)
     {
