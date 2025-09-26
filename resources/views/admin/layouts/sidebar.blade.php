@@ -132,6 +132,27 @@ $role_id = auth()->user()->role_id;
                     </a>
                 </li>
                 @endif
+
+                 @can('colour.view')
+                <li class="nav-item">
+                    <a href="{{ url('colours') }}"
+                        class="nav-link {{ Route::currentRouteName() == 'colours.index' ? 'active' : '' }}">
+                        <i class="nav-icon fa fa-users"></i>
+                        <p>Manage Colours</p>
+                    </a>
+                </li>
+                @endif
+
+ @can('city.view')
+                <li class="nav-item">
+                    <a href="{{ url('cities') }}"
+                        class="nav-link {{ Route::currentRouteName() == 'cities.index' ? 'active' : '' }}">
+                        <i class="nav-icon fa fa-users"></i>
+                        <p>Manage City</p>
+                    </a>
+                </li>
+                @endif
+                
                     </ul>
                 </li>
                 @endif

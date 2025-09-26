@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\AllCity;
+use App\Models\City;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -36,7 +36,7 @@ class DealerController extends Controller
     ->whereNull('users.deleted_at')
     ->select('users.*')
     ->leftJoin('users as creator', 'users.added_by', '=', 'creator.id')
-    ->leftJoin('all_cities as city', 'users.city', '=', 'city.id')
+    ->leftJoin('cities as city', 'users.city', '=', 'city.id')
     ->addSelect('creator.name as created_by_name', 'city.name as city_name');
 
         if ($request->ajax()) {
@@ -114,7 +114,7 @@ class DealerController extends Controller
     public function create()
     {
         abort_if(!auth()->user()->can('dealer.create'), 403, __('User does not have the right permissions.'));
-  $cities  = AllCity::select('id', 'name')->get();
+  $cities  = City::select('id', 'name')->get();
         $title = 'Add Dealer';
         return view('admin.dealers.add',  compact('cities','title'));
     }
@@ -230,7 +230,7 @@ $dealer->setMetaBulk($metaData);
         try {
             $title = 'Edit Dealer';
             $dealerId = decrypt($id);
-            $cities  = AllCity::select('id', 'name')->get();
+            $cities  = City::select('id', 'name')->get();
           $dealer = User::with('meta')->findOrFail($dealerId);
           
            return view('admin.dealers.add', compact('dealer','title','cities'));

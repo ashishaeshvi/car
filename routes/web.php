@@ -13,6 +13,9 @@ use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\HomeController;
+use App\Http\Controllers\Admin\ColourController;
+use App\Http\Controllers\Admin\CityController;
+
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
@@ -54,8 +57,9 @@ Route::middleware(['web','auth'])->group(function () {
         'cars' => CarController::class,   
         'blog' => BlogController::class,
         'brand' => BrandController::class,  
-        'banner' => BannerController::class,  
-        
+        'banner' => BannerController::class,
+        'colours' => ColourController::class,  
+         'cities' => CityController::class,
         
     ]);
     Route::get('/user/{id}/edit', [UserController::class, 'edit'])->name('user.edit');
@@ -81,7 +85,9 @@ Route::middleware(['web','auth'])->group(function () {
     //Banner
     Route::post('banner/status', [BannerController::class, 'changeStatus'])->name('banner.status');
 
+    Route::post('colours/status', [ColourController::class, 'changeStatus'])->name('colours.status');
 
+Route::post('cities/status', [CityController::class, 'changeStatus'])->name('cities.status');
 
 
     // Change Password

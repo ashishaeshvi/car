@@ -33,7 +33,7 @@ class ColourController extends Controller
                 ->editColumn('status', function ($colour) {
                     return ucfirst($colour->status === 'active' ? 'active' : 'inactive');
                 })
-                ->editColumn('created_at', fn ($row) => $row->created_at->format('d F, Y'))
+              
                 ->rawColumns(['action'])
                 ->make(true);
         }
@@ -50,16 +50,12 @@ class ColourController extends Controller
                 data-id="'.encrypt($colour->id).'" title="Edit Detail"><i class="fa fa-edit"></i></a>   ';
         }
 
-        if (auth()->user()->can('colour.view')) {
-            $html .= '<a href="javascript:void(0)"  class="view-colour"   
-                data-toggle="modal" data-target="#viewColourModal"  
-                data-id="'.encrypt($colour->id).'" title="View"><i class="fa fa-eye"></i></a>   ';
-        }
+        
 
         if (auth()->user()->can('colour.status')) {
             $status = $colour->status;
             $id = encrypt($colour->id);
-            $url = route('colour.status');
+            $url = route('colours.status');
             $title = $status === 'active' ? 'Make Inactive' : 'Make Active';
             $icon = $status === 'active' ? 'fa-toggle-off text-danger' : 'fa-toggle-on text-success';
             $tableid = 'colourTable';
@@ -76,7 +72,7 @@ class ColourController extends Controller
 
         if (auth()->user()->can('colour.delete')) {
             $id = encrypt($colour->id);
-            $url = route('colour.destroy', $id);
+            $url = route('colours.destroy', $id);
             $tableid = 'colourTable';
 
             $html .= '  <button type="button" class="btn btn-danger btn-xs delete-record" 
@@ -113,16 +109,19 @@ class ColourController extends Controller
         }
 
         // Validation rules
+       
+
+
         $rules = [
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-                $isUpdate
-                    ? "unique:colours,name,$id"
-                    : 'unique:colours,name',
-            ],
-        ];
+    'name' => [
+        'required',
+        'string',
+        'max:255',
+        $isUpdate
+            ? "unique:colours,name,$id,id,deleted_at,NULL"
+            : 'unique:colours,name,NULL,id,deleted_at,NULL',
+    ],
+];
 
         $validated = $request->validate($rules);
 
