@@ -15,6 +15,12 @@ use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\ColourController;
 use App\Http\Controllers\Admin\CityController;
+use App\Http\Controllers\Admin\BodyTypeController;
+use App\Http\Controllers\Admin\FuelTypeController;
+use App\Http\Controllers\Admin\MileageController;
+use App\Http\Controllers\Admin\EngineCapacityController;
+use App\Http\Controllers\Admin\PowerController;
+use App\Http\Controllers\Admin\TorqueController;
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
@@ -59,7 +65,14 @@ Route::middleware(['web','auth'])->group(function () {
         'brand' => BrandController::class,  
         'banner' => BannerController::class,
         'colours' => ColourController::class,  
-         'cities' => CityController::class,
+        'cities' => CityController::class,
+        'body-types' => BodyTypeController::class,
+        'fuel-types' => FuelTypeController::class,
+        'mileages' => MileageController::class,
+        'engine-capacities' => EngineCapacityController::class,
+        'powers' => PowerController::class,
+        'torques' => TorqueController::class,
+        
         
     ]);
     Route::get('/user/{id}/edit', [UserController::class, 'edit'])->name('user.edit');
@@ -76,18 +89,42 @@ Route::middleware(['web','auth'])->group(function () {
     Route::get('/brand/{id}/edit', [BrandController::class, 'edit'])->name('brand.edit');
     Route::post('brand/status', [BrandController::class, 'changeStatus'])->name('brand.status');
 
+
+    //Brand
+    Route::get('/body-types/{id}/edit', [BodyTypeController::class, 'edit'])->name('body-types.edit');
+    Route::post('body-types/status', [BodyTypeController::class, 'changeStatus'])->name('body-types.status');
+
+    //Fuel
+    Route::get('/fuel-types/{id}/edit', [FuelTypeController::class, 'edit'])->name('fuel-types.edit');
+    Route::post('fuel-types/status', [FuelTypeController::class, 'changeStatus'])->name('fuel-types.status');
+
     //dealers
     Route::post('dealers/store-or-update/{id?}', [DealerController::class, 'storeOrUpdate'])->name('dealers.storeOrUpdate');
     Route::post('dealers/status', [DealerController::class, 'changeStatus'])->name('dealers.status');
+  //Engine Capacities  
+    Route::post('engine-capacities/status', [EngineCapacityController::class, 'changeStatus'])->name('engine-capacities.status');
+    
     
 
+    //mileages  
+    Route::post('mileages/status', [MileageController::class, 'changeStatus'])->name('mileages.status');
+    
+   //power  
+    Route::post('powers/status', [PowerController::class, 'changeStatus'])->name('powers.status');
+
+ //Torque
+    Route::post('torques/status', [TorqueController::class, 'changeStatus'])->name('torques.status');
+
+    
+    
+    
 
     //Banner
     Route::post('banner/status', [BannerController::class, 'changeStatus'])->name('banner.status');
 
     Route::post('colours/status', [ColourController::class, 'changeStatus'])->name('colours.status');
 
-Route::post('cities/status', [CityController::class, 'changeStatus'])->name('cities.status');
+    Route::post('cities/status', [CityController::class, 'changeStatus'])->name('cities.status');
 
 
     // Change Password

@@ -57,7 +57,71 @@ $role_id = auth()->user()->role_id;
                 </li>
                 @endif
 
+                 @can('body_type.view')
+                <li class="nav-item">
+                    <a href="{{ url('body-types') }}"
+                        class="nav-link {{ Route::currentRouteName() == 'body-types.index' ? 'active' : '' }}">
+                        <i class="nav-icon fa fa-users"></i>
+                        <p>Body Type</p>
+                    </a>
+                </li>
+                @endif
 
+
+                  @can('fuel_type.view')
+                <li class="nav-item">
+                    <a href="{{ url('fuel-types') }}"
+                        class="nav-link {{ Route::currentRouteName() == 'fuel-types.index' ? 'active' : '' }}">
+                        <i class="nav-icon fa fa-users"></i>
+                        <p>Fuel Type</p>
+                    </a>
+                </li>
+                @endif
+
+
+                 @can('mileage.view')
+                <li class="nav-item">
+                    <a href="{{ url('mileages') }}"
+                        class="nav-link {{ Route::currentRouteName() == 'mileages.index' ? 'active' : '' }}">
+                        <i class="nav-icon fa fa-users"></i>
+                        <p>Mileages</p>
+                    </a>
+                </li>
+                @endif
+
+
+                 @can('enginecapacity.view')
+                <li class="nav-item">
+                    <a href="{{ url('engine-capacities') }}"
+                        class="nav-link {{ Route::currentRouteName() == 'engine-capacities.index' ? 'active' : '' }}">
+                        <i class="nav-icon fa fa-users"></i>
+                        <p>Engine Capacity</p>
+                    </a>
+                </li>
+                @endif
+
+
+                 @can('power.view')
+                <li class="nav-item">
+                    <a href="{{ url('powers') }}"
+                        class="nav-link {{ Route::currentRouteName() == 'powers.index' ? 'active' : '' }}">
+                        <i class="nav-icon fa fa-users"></i>
+                        <p>Power</p>
+                    </a>
+                </li>
+                @endif
+
+
+                 @can('torque.view')
+                <li class="nav-item">
+                    <a href="{{ url('torques') }}"
+                        class="nav-link {{ Route::currentRouteName() == 'torques.index' ? 'active' : '' }}">
+                        <i class="nav-icon fa fa-users"></i>
+                        <p>Torque</p>
+                    </a>
+                </li>
+                @endif
+                
                
 
                 @can('dealer.view')
