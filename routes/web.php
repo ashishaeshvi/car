@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AdsBannerController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\FeDocumentController;
@@ -34,8 +35,8 @@ Route::get('cache-flush', static function () {
     Artisan::call('config:clear');
     Artisan::call('cache:clear');
     Artisan::call('optimize:clear');
-    
-   return redirect()->back()->with('success', 'Cache cleared successfully!');
+
+    return redirect()->back()->with('success', 'Cache cleared successfully!');
 });
 
 Route::get('/clear-log', function () {
@@ -54,17 +55,18 @@ Route::post('/login', [LoginController::class, 'adminlogin']);
 
 Route::get('/forgot-password', [HomeController::class, 'ForgotPass'])->name('forgot-password');
 Route::post('/forgot-password-send', [HomeController::class, 'ForgotPasswordSend']);
-Route::middleware(['web','auth'])->group(function () {
+Route::middleware(['web', 'auth'])->group(function () {
     Route::get('dashboard', [AdminController::class, 'adminDashboard'])->name('home');
     Route::resources([
         'roles' => RoleController::class,
         'user' => UserController::class,
-        'dealers' => DealerController::class,       
-        'cars' => CarController::class,   
+        'dealers' => DealerController::class,
+        'cars' => CarController::class,
         'blog' => BlogController::class,
-        'brand' => BrandController::class,  
+         'adsbanner' => AdsBannerController::class,
+        'brand' => BrandController::class,
         'banner' => BannerController::class,
-        'colours' => ColourController::class,  
+        'colours' => ColourController::class,
         'cities' => CityController::class,
         'body-types' => BodyTypeController::class,
         'fuel-types' => FuelTypeController::class,
@@ -72,8 +74,8 @@ Route::middleware(['web','auth'])->group(function () {
         'engine-capacities' => EngineCapacityController::class,
         'powers' => PowerController::class,
         'torques' => TorqueController::class,
-        
-        
+       
+
     ]);
     Route::get('/user/{id}/edit', [UserController::class, 'edit'])->name('user.edit');
     Route::get('/edit-profile', [UserController::class, 'editProfile'])->name('user.editProfile');
@@ -83,14 +85,17 @@ Route::middleware(['web','auth'])->group(function () {
 
     //cars
     Route::post('cars/store-or-update/{id?}', [CarController::class, 'storeOrUpdate'])->name('cars.storeOrUpdate');
+    Route::get('cars/{id}/gallery', [CarController::class, 'gallery'])->name('cars.gallery');
+    Route::post('cars/add-galleries/{id}', [CarController::class, 'addGallery'])->name('cars.add-gallery');
+    Route::delete('car-galleries/{id}', [CarController::class, 'galleryDestroy'])->name('car-galleries.destroy');
     Route::post('cars/status', [CarController::class, 'changeStatus'])->name('cars.status');
-    
+
     //Brand
     Route::get('/brand/{id}/edit', [BrandController::class, 'edit'])->name('brand.edit');
     Route::post('brand/status', [BrandController::class, 'changeStatus'])->name('brand.status');
 
 
-    //Brand
+    //Body Type
     Route::get('/body-types/{id}/edit', [BodyTypeController::class, 'edit'])->name('body-types.edit');
     Route::post('body-types/status', [BodyTypeController::class, 'changeStatus'])->name('body-types.status');
 
@@ -101,26 +106,29 @@ Route::middleware(['web','auth'])->group(function () {
     //dealers
     Route::post('dealers/store-or-update/{id?}', [DealerController::class, 'storeOrUpdate'])->name('dealers.storeOrUpdate');
     Route::post('dealers/status', [DealerController::class, 'changeStatus'])->name('dealers.status');
-  //Engine Capacities  
+    //Engine Capacities  
     Route::post('engine-capacities/status', [EngineCapacityController::class, 'changeStatus'])->name('engine-capacities.status');
-    
-    
+
+
 
     //mileages  
     Route::post('mileages/status', [MileageController::class, 'changeStatus'])->name('mileages.status');
-    
-   //power  
+
+    //power  
     Route::post('powers/status', [PowerController::class, 'changeStatus'])->name('powers.status');
 
- //Torque
+    //Torque
     Route::post('torques/status', [TorqueController::class, 'changeStatus'])->name('torques.status');
 
-    
-    
-    
+
+
+
 
     //Banner
     Route::post('banner/status', [BannerController::class, 'changeStatus'])->name('banner.status');
+
+    //Banner
+    Route::post('adsbanner/status', [AdsBannerController::class, 'changeStatus'])->name('adsbanner.status');
 
     Route::post('colours/status', [ColourController::class, 'changeStatus'])->name('colours.status');
 
@@ -139,16 +147,13 @@ Route::middleware(['web','auth'])->group(function () {
     Route::get('/setting', [WebsiteSettingController::class, 'ViewWebsiteSettingPage'])->name('setting');
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-   
-   
 
-Route::get('/seo-link',[BlogController::class, 'seolink']);  
-Route::post('blog/status', [BlogController::class, 'changeStatus'])->name('blog.status');
-    
+
+
+    Route::get('/seo-link', [BlogController::class, 'seolink']);
+    Route::post('blog/status', [BlogController::class, 'changeStatus'])->name('blog.status');
+
 
     Route::get('/log-activity', [WebsiteSettingController::class, 'logActivity'])->name('log-activity');
     Route::get('/log-error', [WebsiteSettingController::class, 'showLogsPage'])->name('log-error');
-
-   
-
 });

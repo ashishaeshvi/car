@@ -9,14 +9,14 @@
                 <h3 class="card-title">{{ $title }}</h3>  
                 <a href="{{route('home')}}" class="btn btn-danger" style="float: right;margin-right:3px;"><i
                             class="fa fa-arrow-left fa-xs"></i> {{ __('Back') }}</a>              
-                   @can('banner.create')           
-                     <a href="{{ route('banner.create') }}" type="button" class="btn btn-info"
+                   @can('adsbanner.create')           
+                     <a href="{{ route('adsbanner.create') }}" type="button" class="btn btn-info"
                          style="float: right;margin-right:3px;">Add New {{ $create_title }}</a>
                     @endcan                       
                   
                 </div>
                 <div class="card-body">
-                    <table id="bannerTable" class="table table-bordered table-striped">                        
+                    <table id="adsbannerTable" class="table table-bordered table-striped">                        
                         <tbody></tbody>
                     </table>
                 </div>
@@ -29,13 +29,13 @@
     <script>
         $(document).ready(function() {
             var url = $("#_url").val();            
-            $("#bannerTable").DataTable({
+            $("#adsbannerTable").DataTable({
                 responsive: true,
                 autoWidth: false,
                 processing: true,
                 serverSide: true,
                 stateSave: true,
-                ajax: url + "/banner",
+                ajax: url + "/adsbanner",
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
@@ -44,8 +44,8 @@
                         searchable: false
                     },
                     {
-                    data: 'bannerImg',
-                    name: 'bannerImg',
+                    data: 'adsImg',
+                    name: 'adsImg',
                     title: 'Image',
                 },                   
                     {
