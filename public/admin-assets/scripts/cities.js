@@ -40,18 +40,14 @@ $().ready(function () {
                     if (response.success) {
                         $("#cityTable").DataTable().ajax.reload(null, false);
                         showToast(response.message, "success");
-                        if (response.type == "add") {                           
+                        if (response.type == "add") {
                             $("#cityForm")[0].reset();
                             $(".close").click();
                         } else {
-                            $("#cityForm")[0].reset();
+                            $("#cityModal #modalTitle").html("Add City");
+                            $("#editId").val('');
+                            $("#cityModal #cityForm")[0].reset();
                             $(".close").click();
-                            let baseUrl = $('meta[name="base-url"]').attr(
-                                "content"
-                            );
-                            $("#cityModal #editId").val(response.data.id);
-                            $("#cityModal #Name").val(response.data.name);
-
                         }
                     } else if (response.error) {
                         showToast(response.error, "error");
@@ -115,14 +111,14 @@ $(document).on("click", ".edit-city", function () {
             $("#loader").show();
         },
         success: function (res) {
-           
+
             if (res.status) {
                 // Update modal title and fields
                 $("#cityModal #modalTitle").html("Update city");
                 $("#cityModal #editId").val(res.doc.id);
                 $("#cityModal #Name").val(res.doc.name);
                 // Display city image if exists
-                
+
             } else {
                 showToast(res.message || "Something went wrong.", "error");
             }

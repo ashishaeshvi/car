@@ -53,8 +53,19 @@
 
                                     <div @class(['col-lg-4', 'col-sm-4' ])>
                                         <div @class(['form-group'])>
+                                            <label>Car Condition (Type) <span @class(['text-danger'])>*</span></label>
+                                            <select name="car_condition" id="car_condition" @class(['form-control']) required>
+                                                <option value="">Select</option>
+                                                <option value="new" {{ old('car_condition', isset($car) ? $car->car_condition : '') == 'New' ? 'selected' : '' }}>New</option>
+                                                <option value="used" {{ old('car_condition', isset($car) ? $car->car_condition : '') == 'Used' ? 'selected' : '' }}>Used</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div @class(['col-lg-4', 'col-sm-4' ,'used-fields' ])>
+                                        <div @class(['form-group'])>
                                             <label>City <span @class(['text-danger'])>*</span></label>
-                                            <select name="city" @class(['form-control']) required>
+                                            <select name="city" class="form-control select2">
                                                 <option value="">-- Select City --</option>
                                                 @foreach($cities as $city)
                                                 <option value="{{ $city->id }}" {{ old('city_id', isset($car) ? $car->city_id : '') == $city->id ? 'selected' : '' }}>
@@ -85,32 +96,31 @@
                                     <div @class(['col-lg-4', 'col-sm-4' ])>
                                         <div @class(['form-group'])>
                                             <label>Price <span @class(['text-danger'])>*</span></label>
-                                            <input type="number" step="0.01" name="price" @class(['form-control']) placeholder="Enter Price" value="{{ old('price', $car->price ?? '') }}" required>
+                                            <input type="text" name="price" @class(['form-control']) placeholder="Enter Price" value="{{ old('price', $car->price ?? '') }}" required>
                                         </div>
                                     </div>
 
                                     <div @class(['col-lg-4', 'col-sm-4' ])>
+                                        <div @class(['form-group'])>
+                                            <label>EMI Starting Price <span @class(['text-danger'])></span></label>
+                                            <input type="number" name="emi_starting_price" @class(['form-control']) placeholder="Enter EMI Starting Price" value="{{ old('emi_starting_price', $car->emi_starting_price ?? '') }}">
+                                        </div>
+                                    </div>
+
+
+
+
+                                    <div @class(['col-lg-4', 'col-sm-4' ,'used-fields' ])>
                                         <div @class(['form-group'])>
                                             <label>Registration Year <span @class(['text-danger'])>*</span></label>
-                                            <input type="text" name="registration_year" @class(['form-control']) placeholder="Feb 2025" value="{{ old('registration_year', $car->registration_year ?? '') }}" required>
+                                            <input type="text" name="registration_year" @class(['form-control']) placeholder="Feb 2025" value="{{ old('registration_year', $car->registration_year ?? '') }}">
                                         </div>
                                     </div>
 
-                                    <div @class(['col-lg-4', 'col-sm-4' ])>
+                                    <div @class(['col-lg-4', 'col-sm-4' ,'used-fields' ])>
                                         <div @class(['form-group'])>
                                             <label>Year of Manufacture <span @class(['text-danger'])>*</span></label>
-                                            <input type="text" name="manufacture_year" maxlength="4" @class(['form-control']) placeholder="YYYY" value="{{ old('manufacture_year', $car->manufacture_year ?? '') }}" required>
-                                        </div>
-                                    </div>
-
-                                    <div @class(['col-lg-4', 'col-sm-4' ])>
-                                        <div @class(['form-group'])>
-                                            <label>Car Condition <span @class(['text-danger'])>*</span></label>
-                                            <select name="car_condition" @class(['form-control']) required>
-                                                <option value="">Select</option>
-                                                <option value="new" {{ old('car_condition', isset($car) ? $car->car_condition : '') == 'New' ? 'selected' : '' }}>New</option>
-                                                <option value="used" {{ old('car_condition', isset($car) ? $car->car_condition : '') == 'Used' ? 'selected' : '' }}>Used</option>
-                                            </select>
+                                            <input type="text" name="manufacture_year" maxlength="4" @class(['form-control']) placeholder="YYYY" value="{{ old('manufacture_year', $car->manufacture_year ?? '') }}">
                                         </div>
                                     </div>
 
@@ -118,18 +128,20 @@
 
 
 
-                                    <div @class(['col-lg-4', 'col-sm-4' ])>
+
+
+                                    <div @class(['col-lg-4', 'col-sm-4' ,'used-fields' ])>
                                         <div @class(['form-group'])>
                                             <label>Ownership <span @class(['text-danger'])>*</span></label>
-                                            <input type="text" name="ownership" @class(['form-control']) placeholder="" value="{{ old('ownership', $car->ownership ?? '') }}" required>
+                                            <input type="text" name="ownership" @class(['form-control']) placeholder="" value="{{ old('ownership', $car->ownership ?? '') }}">
                                         </div>
                                     </div>
 
 
-                                    <div @class(['col-lg-4', 'col-sm-4' ])>
+                                    <div @class(['col-lg-4', 'col-sm-4' ,'used-fields' ])>
                                         <div @class(['form-group'])>
                                             <label>RTO <span @class(['text-danger'])>*</span></label>
-                                            <input type="text" name="rto" @class(['form-control']) placeholder="" value="{{ old('rto', $car->rto ?? '') }}" required>
+                                            <input type="text" name="rto" @class(['form-control']) placeholder="" value="{{ old('rto', $car->rto ?? '') }}">
                                         </div>
                                     </div>
 
@@ -203,23 +215,31 @@
                                     <div @class(['col-lg-4', 'col-sm-4' ])>
                                         <div @class(['form-group'])>
                                             <label>Transmission <span @class(['text-danger'])>*</span></label>
-                                            <select name="transmission" @class(['form-control']) required>
-                                                <option value="">Select</option>
-                                                <option value="Manual" {{ old('transmission', $car->specifications->transmission ?? '') == 'Manual' ? 'selected' : '' }}>Manual</option>
-                                                <option value="Automatic" {{ old('transmission', $car->specifications->transmission ?? '') == 'Automatic' ? 'selected' : '' }}>Automatic</option>
-                                                <option value="Clutchless Manual" {{ old('transmission', $car->specifications->transmission ?? '') == 'Clutchless Manual' ? 'selected' : '' }}>Clutchless Manual</option>
+                                            @php
+                                            $selectedTransmissions = explode(',', $car->specifications->transmission ?? '');
+                                            @endphp
+
+                                            <select name="transmission[]" class="form-control select2" multiple required>
+                                                <option value="Manual" {{ in_array('Manual', $selectedTransmissions) ? 'selected' : '' }}>Manual</option>
+                                                <option value="Automatic" {{ in_array('Automatic', $selectedTransmissions) ? 'selected' : '' }}>Automatic</option>
+                                                <option value="Clutchless Manual" {{ in_array('Clutchless Manual', $selectedTransmissions) ? 'selected' : '' }}>Clutchless Manual</option>
                                             </select>
                                         </div>
                                     </div>
 
 
-                                    <div @class(['col-lg-4', 'col-sm-4' ])>
-                                        <div @class(['form-group'])>
-                                            <label>Fuel Type <span @class(['text-danger'])>*</span></label>
-                                            <select name="fuel_type" @class(['form-control']) required>
+                                    @php
+                                    $selectedFuelTypes = explode(',', $car->specifications->fuel_type ?? '');
+                                    @endphp
+
+                                    <div class="col-lg-4 col-sm-4">
+                                        <div class="form-group">
+                                            <label>Fuel Type <span class="text-danger">*</span></label>
+                                            <select name="fuel_type[]" class="form-control select2" multiple required>
                                                 <option value="">Select Fuel Type</option>
                                                 @foreach($fuelTypes as $fuelType)
-                                                <option value="{{ $bodyType->id }}" {{ old('fuel_type', $car->specifications->fuel_type ?? '') == $fuelType->id ? 'selected' : '' }}>
+                                                <option value="{{ $fuelType->id }}"
+                                                    {{ in_array($fuelType->id, $selectedFuelTypes) ? 'selected' : '' }}>
                                                     {{ $fuelType->name }}
                                                 </option>
                                                 @endforeach
@@ -348,14 +368,18 @@
                                         </div>
                                     </div>
 
+                                    @php
+                                    $selectedColours = explode(',', $car->specifications->colour ?? '');
+                                    @endphp
+
                                     <div class="col-lg-4 col-sm-4">
                                         <div class="form-group">
-                                            <label>Colour</label>
-                                            <select name="colour" class="form-control" required>
+                                            <label>Colour <span class="text-danger">*</span></label>
+                                            <select name="colour[]" class="form-control select2" multiple required>
                                                 <option value="">Select Colour</option>
                                                 @foreach ($colours as $colour)
                                                 <option value="{{ $colour->id }}"
-                                                    {{ old('colour', $car->specifications->colour ?? '') == $colour->id ? 'selected' : '' }}>
+                                                    {{ in_array($colour->id, $selectedColours) ? 'selected' : '' }}>
                                                     {{ $colour->name }}
                                                 </option>
                                                 @endforeach
@@ -477,53 +501,91 @@
     }
 
     $('#nextCarInfo').click(function() {
-        const {
-            isValid,
-            failedFields
-        } = validateFields([
+        const carCondition = $('select[name="car_condition"]').val()?.toLowerCase() || '';
+
+        // Base fields (common for all)
+        let fields = [
             'select[name="dealer"]',
-            'select[name="city"]',
             'input[name="car_name"]',
             'input[name="price"]',
-            'input[name="manufacture_year"]',
-            'input[name="registration_year"]',
-            'input[name="ownership"]',
-            'input[name="rto"]',
             'select[name="car_condition"]',
-        ]);
+        ];
 
-        const hasExistingImage = $('input[name="existing_car_image"]').length > 0;     
+        // If user selects "used", add extra required fields
+        if (carCondition === 'used') {
+            fields.push(
+                'input[name="manufacture_year"]',
+                'select[name="city"]',
+                'input[name="registration_year"]',
+                'input[name="ownership"]',
+                'input[name="rto"]'
+            );
+        }
 
+        // Check if existing image is present
+        const hasExistingImage = $('input[name="existing_car_image"]').length > 0;
         if (!hasExistingImage) {
             fields.push('input[name="car_image"]');
         }
-        console.log("Validation Result:", isValid);
-        if (!isValid) {
-            console.log("Failed Fields:", failedFields);
-        }
 
-        if (isValid) $('#specs-tab').tab('show');
-    });
-
-    $('#nextSpecs').click(function() {
+        // Run validation
         const {
             isValid,
             failedFields
-        } = validateFields([
-            'select[name="body_type"]',
-            'select[name="transmission"]',
-            'select[name="fuel_type"]',
-            'select[name="mileage"]',
-            'select[name="brand"]',
-        ]);
+        } = validateFields(fields);
 
         console.log("Validation Result:", isValid);
         if (!isValid) {
             console.log("Failed Fields:", failedFields);
-            // Optionally, highlight failed fields
-            failedFields.forEach(function(field) {
-                $(field).addClass('is-invalid');
-            });
+            return; // Stop here if invalid
+        }
+
+        // If all good, move to next tab
+        $('#specs-tab').tab('show');
+    });
+
+
+    $('#nextSpecs').click(function() {
+        const failedFields = [];
+
+        // List of selectors to validate
+        const fieldsToValidate = [
+            'select[name="body_type"]',
+            'select[name="transmission[]"]', // note the []
+            'select[name="fuel_type[]"]',
+            'select[name="mileage"]',
+            'select[name="brand"]',
+        ];
+
+        fieldsToValidate.forEach(function(selector) {
+            const $field = $(selector);
+
+            // Check if multi-select or single-select
+            let value = $field.val();
+
+            if ($field.prop('multiple')) {
+                // For multiple select, check if array is empty
+                if (!value || value.length === 0) {
+                    failedFields.push(selector);
+                    $field.addClass('is-invalid');
+                } else {
+                    $field.removeClass('is-invalid');
+                }
+            } else {
+                // For single select
+                if (!value || value === '') {
+                    failedFields.push(selector);
+                    $field.addClass('is-invalid');
+                } else {
+                    $field.removeClass('is-invalid');
+                }
+            }
+        });
+
+        const isValid = failedFields.length === 0;
+        console.log("Validation Result:", isValid);
+        if (!isValid) {
+            console.log("Failed Fields:", failedFields);
             return; // Stop moving to next tab
         }
 
@@ -531,8 +593,32 @@
     });
 
 
+
     $('#nextFeatures').click(function() {
         $('#docs-tab').tab('show'); // no required fields here
+    });
+
+
+
+    $(document).ready(function() {
+        function toggleUsedFields() {
+            const isUsed = $('#car_condition').val().toLowerCase() === 'used';
+            const $usedFields = $('.used-fields');
+
+            if (isUsed) {
+                $usedFields.show();
+                $usedFields.find('input').attr('required', true);
+            } else {
+                $usedFields.hide();
+                $usedFields.find('input').removeAttr('required');
+            }
+        }
+
+        // Run on page load
+        toggleUsedFields();
+
+        // Run when user changes selection
+        $('#car_condition').on('change', toggleUsedFields);
     });
 </script>
 @endsection

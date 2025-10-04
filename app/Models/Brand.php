@@ -6,13 +6,24 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
-
+use Illuminate\Support\Str;
 class Brand extends Model
 {
     use SoftDeletes, LogsActivity;
-    protected $fillable = ['name','brandImg' ,'status'];
+    protected $fillable = ['name','slug','brandImg' ,'status'];
 
-    
+      protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($brand) {
+            $brand->slug = Str::slug($brand->name);
+        });
+
+        static::updating(function ($brand) {
+            $brand->slug = Str::slug($brand->name);
+        });
+    }
 
     public function getActivitylogOptions(): LogOptions
     {

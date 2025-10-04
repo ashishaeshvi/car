@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class FuelType extends Model
 {
@@ -15,7 +16,21 @@ class FuelType extends Model
         'image',
         'status',
         'user_id',
+        'slug'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($fuelType) {
+            $fuelType->slug = Str::slug($fuelType->name);
+        });
+
+        static::updating(function ($fuelType) {
+            $fuelType->slug = Str::slug($fuelType->name);
+        });
+    }
 
     public function user()
     {

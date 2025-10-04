@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use Illuminate\Http\Request;
 use DB;
+
 class BlogController extends Controller
 {
     public function __construct()
@@ -42,8 +43,8 @@ class BlogController extends Controller
                         });
                     }
                 })
-                ->editColumn('created_at', fn ($row) => $row->created_at->format('d M, Y'))
-                ->addColumn('action', fn ($row) => $this->generateActionButtons($row))
+                ->editColumn('created_at', fn($row) => $row->created_at->format('d M, Y'))
+                ->addColumn('action', fn($row) => $this->generateActionButtons($row))
                 ->rawColumns(['action'])
                 ->toJson();
         }
@@ -55,7 +56,7 @@ class BlogController extends Controller
     {
         $html = '';
         if (auth()->user()->can('blogs.edit')) {
-            $html .= '<a href="'.route('blog.edit', encrypt($blog->id)).'" title="Edit"><i class="fa fa-edit"></i></a> ';
+            $html .= '<a href="' . route('blog.edit', encrypt($blog->id)) . '" title="Edit"><i class="fa fa-edit"></i></a> ';
         }
 
         if (auth()->user()->can('blogs.status')) {
@@ -66,12 +67,12 @@ class BlogController extends Controller
             $icon = $status === 'active' ? 'fa-toggle-off text-danger' : 'fa-toggle-on text-success';
             $tableid = 'blogs-table';
             $html .= '<a href="javascript:void(0);" class="toggle-status"
-            data-id="'.$id.'"
-            data-status="'.$status.'"
-            data-tableid="'.$tableid.'"
-            data-url="'.$url.'"
-            title="'.$title.'">
-            <i class="fa fa-fw '.$icon.'"></i> 
+            data-id="' . $id . '"
+            data-status="' . $status . '"
+            data-tableid="' . $tableid . '"
+            data-url="' . $url . '"
+            title="' . $title . '">
+            <i class="fa fa-fw ' . $icon . '"></i> 
             </a>';
         }
 
@@ -81,9 +82,9 @@ class BlogController extends Controller
             $tableid = 'blogs-table';
 
             $html .= '<button type="button" class="btn btn-danger btn-xs delete-record"
-            data-id="'.$id.'"
-            data-url="'.$url.'"
-            data-tableid="'.$tableid.'"
+            data-id="' . $id . '"
+            data-url="' . $url . '"
+            data-tableid="' . $tableid . '"
             data-title="blog"
             title="Delete">
             <i class="fa fa-trash"></i>
@@ -117,17 +118,18 @@ class BlogController extends Controller
         $validated = $request->validate([
             'blog_title' => 'required|string|max:255',
             'slug_uri' => 'required|string|max:255|unique:blogs,slug_uri',
+            'short_description' => 'required|string',
             'description' => 'required|string',
             'meta_title' => 'nullable|string|max:255',
             'meta_keyword' => 'nullable|string|max:255',
             'meta_description' => 'nullable',
-            'upload_image'      => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // optional
+            'blog_img'      => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // optional
         ]);
 
         // Prepare data
         $data = [
             'blog_title' => $validated['blog_title'],
-
+            'short_description' => $validated['short_description'],
             'slug_uri' => $validated['slug_uri'],
             'blog_description' => $validated['description'],
             'meta_title' => $validated['meta_title'] ?? null,
@@ -138,23 +140,22 @@ class BlogController extends Controller
             // Optional: track who added the blog
         ];
 
-         if ($request->hasFile('blog_img')) {
-
-                
-                 $data['blog_img'] = uploadWebpImage($request->file('blog_img'), 'blog', false, $blog->blog_img);
-            }
+        if ($request->hasFile('blog_img')) {
 
 
-             if ($request->hasFile('blog_thumbnail_img')) {
+            $data['blog_img'] = uploadWebpImage($request->file('blog_img'), 'blog', false, $request->blog_img);
+        }
 
-                
-                 $data['blog_thumbnail_img'] = uploadWebpImage($request->file('blog_thumbnail_img'), 'blog', false, $blog->blog_thumbnail_img);
-            }
+
+        if ($request->hasFile('blog_thumbnail_img')) {
+
+
+            $data['blog_thumbnail_img'] = uploadWebpImage($request->file('blog_thumbnail_img'), 'blog', false, $request->blog_thumbnail_img);
+        }
 
         $page_id = Blog::insertGetId($data);
 
         return redirect()->route('blog.index')->with('success', 'New post added successfully!');
-
     }
 
     public function edit($id)
@@ -182,67 +183,67 @@ class BlogController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-{
-    // Validate incoming request
-    $validated = $request->validate([
-        'blog_title'        => 'required|string|max:255',
-        'slug_uri'          => "required|string|max:255|unique:blogs,slug_uri,$id",
-        'description'       => 'required|string',
-        'meta_title'        => 'nullable|string|max:255',
-        'meta_keyword'      => 'nullable|string|max:255',
-        'meta_description'  => 'nullable',
-        'upload_image'      => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // optional
-    ]);
+    {
+        // Validate incoming request
+        $validated = $request->validate([
+            'blog_title'        => 'required|string|max:255',
+             'short_description' => 'required|string',
+            'slug_uri'          => "required|string|max:255|unique:blogs,slug_uri,$id",
+            'description'       => 'required|string',
+            'meta_title'        => 'nullable|string|max:255',
+            'meta_keyword'      => 'nullable|string|max:255',
+            'meta_description'  => 'nullable',
+            'upload_image'      => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // optional
+        ]);
 
-    try {
-        $blog = Blog::findOrFail($id);
+        try {
+            $blog = Blog::findOrFail($id);
 
-        // Prepare data
-        $data = [
-            'blog_title'        => $validated['blog_title'],
-            'slug_uri'          => $validated['slug_uri'],
-            'blog_description'  => $validated['description'],
-            'meta_title'        => $validated['meta_title'] ?? null,
-            'meta_keyword'      => $validated['meta_keyword'] ?? null,
-            'meta_description'  => $validated['meta_description'] ?? null,
-            'updated_at'        => now(),
-        ];
+            // Prepare data
+            $data = [
+                'blog_title'        => $validated['blog_title'],
+                'short_description'        => $validated['short_description'],
+                'slug_uri'          => $validated['slug_uri'],
+                'blog_description'  => $validated['description'],
+                'meta_title'        => $validated['meta_title'] ?? null,
+                'meta_keyword'      => $validated['meta_keyword'] ?? null,
+                'meta_description'  => $validated['meta_description'] ?? null,
+                'updated_at'        => now(),
+            ];
+            // Handle image upload
 
-        // Handle image upload
-       
 
 
-         if ($request->hasFile('blog_img')) {
+            if ($request->hasFile('blog_img')) {
 
                 if ($blog->blog_img) {
                     deleteFiles($blog->blog_img);
                 }
-                 $data['blog_img'] = uploadWebpImage($request->file('blog_img'), 'blog', false, $blog->blog_img);
+                $data['blog_img'] = uploadWebpImage($request->file('blog_img'), 'blog', false, $blog->blog_img);
             }
 
 
-             if ($request->hasFile('blog_thumbnail_img')) {
+            if ($request->hasFile('blog_thumbnail_img')) {
 
                 if ($blog->blog_thumbnail_img) {
                     deleteFiles($blog->blog_thumbnail_img);
                 }
-                 $data['blog_thumbnail_img'] = uploadWebpImage($request->file('blog_thumbnail_img'), 'blog', false, $blog->blog_thumbnail_img);
+                $data['blog_thumbnail_img'] = uploadWebpImage($request->file('blog_thumbnail_img'), 'blog', false, $blog->blog_thumbnail_img);
             }
 
 
-        
 
-        // Update blog
-        $blog->update($data);
 
-        return redirect('blog')->with('message', 'Post Updated Successfully.');
+            // Update blog
+            $blog->update($data);
 
-     } catch (\Exception $e) {
+            return redirect('blog')->with('message', 'Post Updated Successfully.');
+        } catch (\Exception $e) {
             DB::rollBack();
 
-            return redirect()->back()->with('error', 'Something went wrong: '.$e->getMessage());
+            return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
-}
+    }
 
 
     public function changeStatus(Request $request)
@@ -272,7 +273,7 @@ class BlogController extends Controller
             ]);
         } catch (\Exception $e) {
 
-            Log::error('Blog status update failed: '.$e->getMessage());
+            Log::error('Blog status update failed: ' . $e->getMessage());
 
             return response()->json([
                 'status' => false,
@@ -290,20 +291,20 @@ class BlogController extends Controller
             $blog = Blog::findOrFail(decrypt($id));
             $blog->delete();
 
-             if ($blog->blog_img) {
-                    deleteFiles($blog->blog_img);
-                }
-           if ($blog->blog_thumbnail_img) {
-                    deleteFiles($blog->blog_thumbnail_img);
-                }
-           
+            if ($blog->blog_img) {
+                deleteFiles($blog->blog_img);
+            }
+            if ($blog->blog_thumbnail_img) {
+                deleteFiles($blog->blog_thumbnail_img);
+            }
+
 
             DB::commit();
 
             return response()->json(['message' => 'Blog detail deleted successfully.']);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Blog deletion failed: '.$e->getMessage());
+            Log::error('Blog deletion failed: ' . $e->getMessage());
 
             return response()->json([
                 'status' => false,

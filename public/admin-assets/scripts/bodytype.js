@@ -38,17 +38,18 @@ $().ready(function () {
                 },
                 success: function (response) {
                     if (response.success) {
-                        $("#bodyTypeTable").DataTable().ajax.reload(null, false);
+                         $("#bodyTypeTable").DataTable().ajax.reload(null, false);
                         showToast(response.message, "success");
                         if (response.type == "add") {
                             $("#showImg").html("");
                             $("#bodyTypeForm")[0].reset();
                             $(".close").click();
                         } else {
+                             $("#editId").val('');
                             $("#bodyTypeForm")[0].reset();
-                            $(".close").click();
-                            
+                            $(".close").click();                            
                         }
+                       
                     } else if (response.error) {
                         showToast(response.error, "error");
                     }

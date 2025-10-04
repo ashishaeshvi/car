@@ -44,10 +44,11 @@ $().ready(function () {
                             $("#showImg").html("");
                             $("#fuelTypeForm")[0].reset();
                             $(".close").click();
-                        } else {
-                            $("#fuelTypeForm")[0].reset();
+                        } else {                           
+                            $("#fuelTypeModal #modalTitle").html("Add Fuel Type");
+                            $("#editId").val('');
+                            $("#fuelTypeModal #fuelTypeForm")[0].reset();
                             $(".close").click();
-                            
                         }
                     } else if (response.error) {
                         showToast(response.error, "error");
@@ -87,7 +88,7 @@ $(document).ready(function () {
 
 $(".custom-close").on("click", function () {
     var $modal = $("#fuelTypeModal");
-$("#fuelTypeModal #modalTitle").html("Add Fuel Type");
+    $("#fuelTypeModal #modalTitle").html("Add Fuel Type");
     var form = $modal.find("form")[0];
     if (form) form.reset();
 
@@ -101,7 +102,7 @@ $("#fuelTypeModal #modalTitle").html("Add Fuel Type");
 
 $(document).on("click", ".edit-fuelType", function () {
     let encryptedId = $(this).data("id");
-  
+
     $(".editmodal").hide();
 
     let baseUrl = $('meta[name="base-url"]').attr("content");
@@ -112,7 +113,7 @@ $(document).on("click", ".edit-fuelType", function () {
             $("#loader").show();
         },
         success: function (res) {
-          
+
             if (res.status) {
                 // Update modal title and fields
                 $("#fuelTypeModal #modalTitle").html("Update Fuel Type");
@@ -156,16 +157,16 @@ $(document).on("click", ".view-fuelType", function () {
         },
         success: function (res) {
             if (res.status) {
-                $("#viewName").html(res.doc.name);               
+                $("#viewName").html(res.doc.name);
                 if (res.doc.image != "") {
                     const brandImgUrl =
                         baseUrl + "/storage/" + res.doc.image;
                     $("#viewfuelTypeImg").html(
                         `<img src="${brandImgUrl}" alt="fuelTypeImg" style="max-width: 100px; height: 60px;">`
                     );
-                }              
+                }
 
-                
+
             } else {
                 showToast(res.message || "Something went wrong.", "error");
             }

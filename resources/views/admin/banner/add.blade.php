@@ -20,7 +20,7 @@
                     <div class="input-group">
                       <div class="custom-file">
                         <input type="file" class="custom-file-input  preview-image" data-preview="#showImg"
-                          id="image" name="bannerImg" accept=".png, .jpg, .jpeg" style="cursor: pointer;">
+                          id="image" name="bannerImg" style="cursor: pointer;">
                         <label class="custom-file-label" for="image">Upload Banner</label>
                       </div>
                     </div>

@@ -19,6 +19,7 @@ class Blog extends Model
         'meta_keyword',
         'meta_description',
         'blog_img', 
-		'blog_thumbnail_img',        
+		'blog_thumbnail_img',
+        'short_description'        
     ];
 }

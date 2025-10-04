@@ -12,7 +12,7 @@ class Car extends Model
     protected $fillable = [
         'dealer_id', 'brand','car_id' ,'car_name', 'variant', 'price',
         'manufacture_year', 'registration_year', 'car_condition',
-        'insurance_doc', 'ownership', 'rto', 'car_image','description','rc_copy','insurance_doc','pollution','image_360','gallery_image','features'
+        'insurance_doc', 'ownership', 'rto', 'car_image','description','rc_copy','insurance_doc','pollution','image_360','gallery_image','features','emi_starting_price'
     ];
 
     // Relationships

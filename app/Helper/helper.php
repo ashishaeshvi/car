@@ -169,17 +169,20 @@ if (!function_exists('downloadHelper')) {
     }
 }
 
-if (!function_exists('dynamicPhoneNo')) {
-    function dynamicPhoneNo($countryCode, $fe_no)
-    {
-        return match ($countryCode) {
-            '+973' => "5545{$fe_no}",
-            '+965' => "5545{$fe_no}",
-            '+968' => "5545{$fe_no}",
-            '+974' => "5545{$fe_no}",
-            '+966' => "5545{$fe_no}",
-            '+971' => "5545{$fe_no}",
-        };
+
+
+
+if (! function_exists('limit_words')) {
+    /**
+     * Limit the number of words in a string.
+     *
+     * @param string $text
+     * @param int $words
+     * @param string $end
+     * @return string
+     */
+    function limit_words($text, $words = 100, $end = '...') {
+        return Str::words($text, $words, $end);
     }
 }
 

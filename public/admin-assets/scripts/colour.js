@@ -45,14 +45,10 @@ $().ready(function () {
                             $("#colourForm")[0].reset();
                             $(".close").click();
                         } else {
-                            $("#colourForm")[0].reset();
+                            $("#colourModal #modalTitle").html("Add Colour");
+                            $("#editId").val('');
+                            $("#colourModal #colourForm")[0].reset();
                             $(".close").click();
-                            let baseUrl = $('meta[name="base-url"]').attr(
-                                "content"
-                            );
-                            $("#colourModal #editId").val(response.data.id);
-                            $("#colourModal #Name").val(response.data.name);
-
                         }
                     } else if (response.error) {
                         showToast(response.error, "error");
@@ -116,14 +112,14 @@ $(document).on("click", ".edit-colour", function () {
             $("#loader").show();
         },
         success: function (res) {
-           
+
             if (res.status) {
                 // Update modal title and fields
                 $("#colourModal #modalTitle").html("Update colour");
                 $("#colourModal #editId").val(res.doc.id);
                 $("#colourModal #Name").val(res.doc.name);
                 // Display colour image if exists
-                
+
             } else {
                 showToast(res.message || "Something went wrong.", "error");
             }

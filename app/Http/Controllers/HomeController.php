@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -8,20 +8,63 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
+use App\Models\AdsBanner;
+use App\Models\Banner;
+use App\Models\Blog;
 
 class HomeController extends Controller
 {
 
 
-     public function index()
-    {      
-        return view('home');
+    public function index()
+    {
+        // Get active banners
+        $banner = Banner::where('status', 'active')->latest()->first();
+        $blogs = Blog::where('status', 'active')->latest()->get();
+        // Get active ads banners
+        $positions = ['home_top', 'home_left', 'home_right'];
+
+        $adsBanners = [];
+        foreach ($positions as $pos) {
+            $adsBanners[$pos] = AdsBanner::where('status', 'active')
+                ->where('position', $pos)
+                ->latest()
+                ->first();
+        }
+
+        // Pass data to view
+        return view('front.home', compact('banner', 'adsBanners', 'blogs'));
     }
 
     public function ForgotPass()
     {
         return view('auth.passwords.email');
     }
+
+    public function news()
+    {
+        $blogs = Blog::where('status', 'active')->orderBy('created_at', 'desc')->get();
+        return view('front.blogs', compact('blogs'));
+    }
+
+
+    public function newsDetail($slugUri)
+    {
+
+        // Try to find the blog by slug_uri
+        $blog = Blog::where('slug_uri', $slugUri)->first();
+
+
+        $recentBlogs = Blog::where('id', '!=', $blog->id)->where('status', 'active')->orderBy('created_at', 'desc')->take(5)->get();
+        // If blog not found, redirect to homepage (or any page)
+        if (! $blog) {
+            return redirect()->route('home')->with('error', 'Blog not found.');
+        }
+
+        // If found, show blog detail
+        return view('front.blog-detail', compact('blog', 'recentBlogs'));
+    }
+
 
 
     public function ForgotPasswordSend(Request $request)
@@ -64,7 +107,7 @@ class HomeController extends Controller
             ], 500);
         }
 
-        $redirectUrl =  'login' ;
+        $redirectUrl =  'login';
 
         // Set email config dynamically
         $mailData = [
@@ -74,7 +117,7 @@ class HomeController extends Controller
             'MAIL_FROM_NAME'   => config('mail.from.name'),
             'redirectUrl'      => $redirectUrl,
             'website_settings' => DB::table('website_settings')->first(),
-        ];        
+        ];
 
         try {
             Mail::send('emails.send_code', $mailData, function ($message) use ($user) {

@@ -45,23 +45,10 @@ $().ready(function () {
                             $("#brandForm")[0].reset();
                             $(".close").click();
                         } else {
-                            $("#brandForm")[0].reset();
-                            $(".close").click();
-                            let baseUrl = $('meta[name="base-url"]').attr(
-                                "content"
-                            );
-                            $("#brandModal #editId").val(response.data.id);
-                            $("#brandModal #Name").val(response.data.name);
-
-                            if (response.data.brandImg != "") {
-                                const signUrl =
-                                    baseUrl +
-                                    "/storage/" +
-                                    response.data.brandImg;
-                                $("#FeSignImg").html(
-                                    `<img src="${signUrl}" alt="brandImg" style="max-width: 100px; height: 60px;">`
-                                );
-                            }
+                            $("#brandModal #modalTitle").html("Add Brand");
+                             $("#editId").val('');
+                            $("#brandModal #brandForm")[0].reset();
+                            $(".close").click();                           
                         }
                     } else if (response.error) {
                         showToast(response.error, "error");

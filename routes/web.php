@@ -13,20 +13,25 @@ use App\Http\Controllers\Admin\CarController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\BannerController;
-use App\Http\Controllers\Admin\HomeController;
+
 use App\Http\Controllers\Admin\ColourController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\BodyTypeController;
+use App\Http\Controllers\Admin\CarFaqController;
+use App\Http\Controllers\Admin\CarMileageController;
 use App\Http\Controllers\Admin\FuelTypeController;
 use App\Http\Controllers\Admin\MileageController;
 use App\Http\Controllers\Admin\EngineCapacityController;
 use App\Http\Controllers\Admin\PowerController;
 use App\Http\Controllers\Admin\TorqueController;
 
+use App\Http\Controllers\HomeController;
+
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 
+require __DIR__ . '/frontend.php';
 // Cache Clear Route
 Route::get('cache-flush', static function () {
     Cache::flush();
@@ -48,11 +53,9 @@ Route::get('/clear-log', function () {
 })->name('clear.log');
 
 
-Route::get('/', [HomeController::class, 'index'])->name('index');
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'adminlogin']);
-
 Route::get('/forgot-password', [HomeController::class, 'ForgotPass'])->name('forgot-password');
 Route::post('/forgot-password-send', [HomeController::class, 'ForgotPasswordSend']);
 Route::middleware(['web', 'auth'])->group(function () {
@@ -63,7 +66,7 @@ Route::middleware(['web', 'auth'])->group(function () {
         'dealers' => DealerController::class,
         'cars' => CarController::class,
         'blog' => BlogController::class,
-         'adsbanner' => AdsBannerController::class,
+        'adsbanner' => AdsBannerController::class,
         'brand' => BrandController::class,
         'banner' => BannerController::class,
         'colours' => ColourController::class,
@@ -74,7 +77,6 @@ Route::middleware(['web', 'auth'])->group(function () {
         'engine-capacities' => EngineCapacityController::class,
         'powers' => PowerController::class,
         'torques' => TorqueController::class,
-       
 
     ]);
     Route::get('/user/{id}/edit', [UserController::class, 'edit'])->name('user.edit');
@@ -86,9 +88,43 @@ Route::middleware(['web', 'auth'])->group(function () {
     //cars
     Route::post('cars/store-or-update/{id?}', [CarController::class, 'storeOrUpdate'])->name('cars.storeOrUpdate');
     Route::get('cars/{id}/gallery', [CarController::class, 'gallery'])->name('cars.gallery');
+
     Route::post('cars/add-galleries/{id}', [CarController::class, 'addGallery'])->name('cars.add-gallery');
     Route::delete('car-galleries/{id}', [CarController::class, 'galleryDestroy'])->name('car-galleries.destroy');
     Route::post('cars/status', [CarController::class, 'changeStatus'])->name('cars.status');
+
+    Route::get('cars/{id}/latest-updates', [CarController::class, 'latestUpdates'])->name('cars.latestupdates');
+    Route::post('cars/{carId}/latest-updates', [CarController::class, 'addLatestUpdate'])
+        ->name('cars.add-latest-update');
+
+
+
+
+    Route::get('cars/{id}/pros-cons', [CarController::class, 'prosCons'])
+        ->name('cars.pros-cons');
+
+    // Add a new Pro or Con
+    Route::post('cars/{carId}/pros-cons', [CarController::class, 'addProsCons'])
+        ->name('cars.add-pros-cons');
+
+    // Delete a Pro or Con
+    Route::delete('pros-cons/{id}', [CarController::class, 'prosConsDestroy'])
+        ->name('pros-cons.destroy');
+
+    // Delete a latest update
+    Route::delete('latest-updates/{id}', [CarController::class, 'latestUpdateDestroy'])
+        ->name('latest-updates.destroy');
+
+
+
+    Route::get('cars/{carId}/mileages', [CarMileageController::class, 'index'])->name('cars.mileages');
+    Route::post('cars/{carId}/mileages', [CarMileageController::class, 'store'])->name('cars.mileages.store');
+    Route::delete('cars/mileages/{id}', [CarMileageController::class, 'destroy'])->name('cars.mileages.destroy');
+
+
+    Route::get('cars/{carId}/faqs', [CarFaqController::class, 'index'])->name('cars.faqs');
+Route::post('cars/{carId}/faqs', [CarFaqController::class, 'store'])->name('cars.faqs.store');
+Route::delete('cars/faqs/{id}', [CarFaqController::class, 'destroy'])->name('cars.faqs.destroy');
 
     //Brand
     Route::get('/brand/{id}/edit', [BrandController::class, 'edit'])->name('brand.edit');

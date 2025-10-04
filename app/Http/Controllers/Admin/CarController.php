@@ -7,6 +7,8 @@ use App\Models\BodyType;
 use App\Models\Brand;
 use App\Models\Car;
 use App\Models\CarGallery;
+use App\Models\CarLatestUpdate;
+use App\Models\CarProsCons;
 use App\Models\CarSpecification;
 use App\Models\City;
 use App\Models\Colour;
@@ -116,8 +118,25 @@ class CarController extends Controller
         if (auth()->user()->can('cars.gallery')) { // Create a permission for managing gallery if needed
             $html .= '<a href="' . route('cars.gallery', encrypt($car->id)) . '" title="Gallery Images">
                 <i class="fa fa-image text-primary"></i>
-              </a> ';
+              </a> |';
         }
+
+        $html .= '<a href="' . route('cars.latestupdates', encrypt($car->id)) . '" title="Latest Updates">
+               Latest Updates
+              </a>  | ';
+
+        $html .= '<a href="' . route('cars.pros-cons', encrypt($car->id)) . '" title="Latest Updates">
+               Pros & Cons
+              </a> |';
+
+               $html .= '<a href="' . route('cars.mileages', encrypt($car->id)) . '" title="Latest Updates">
+               Car Mileages
+              </a> |';
+
+              $html .= '<a href="' . route('cars.faqs', encrypt($car->id)) . '" title="Latest Updates">
+               Car Faqs
+              </a> | 
+              ';
 
         return $html;
     }
@@ -162,7 +181,9 @@ class CarController extends Controller
             'city' => 'required|string|max:10',
             'brand' => 'nullable|string|max:255',
             'variant' => 'nullable|string|max:255',
-            'price' => 'nullable|numeric',
+            'price' => 'nullable|string',
+            'emi_starting_price' => 'nullable|string',
+
             'manufacture_year' => 'nullable',
             'registration_year' => 'nullable',
             'ownership' => 'required|string',
@@ -170,12 +191,16 @@ class CarController extends Controller
             'car_condition' => 'required|string',
 
             // Specifications
-            'fuel_type' => 'nullable|string',
-            'transmission' => 'nullable|string',
+
+            'transmission' => 'nullable|array',
+            'transmission.*' => 'nullable|string',
             'engine_cc' => 'nullable|numeric',
             'mileage' => 'nullable|numeric',
             'seating_capacity' => 'nullable|numeric',
-            'colour' => 'nullable|string',
+            'fuel_type' => 'nullable|array',
+            'fuel_type.*' => 'nullable|string',
+            'colour' => 'nullable|array',
+            'colour.*' => 'nullable|string',
             'safety_ratings' => 'nullable|string',
             'airbags' => 'nullable|string',
             'torque_id' => 'nullable|integer',
@@ -192,7 +217,6 @@ class CarController extends Controller
             'insurance_doc' => 'nullable|file|mimes:jpg,jpeg,png,pdf',
             'pollution' => 'nullable|file|mimes:jpg,jpeg,png,pdf',
             'image_360' => 'nullable|file|mimes:jpg,jpeg,png',
-            'gallery_images.*' => 'nullable|file|mimes:jpg,jpeg,png',
             'car_image' => ($id ? 'nullable' : 'required') . '|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
@@ -207,6 +231,7 @@ class CarController extends Controller
             $car->car_name = $data['car_name'];
             $car->variant = $data['variant'] ?? null;
             $car->price = $data['price'] ?? null;
+            $car->emi_starting_price = $data['emi_starting_price'] ?? null;
             $car->manufacture_year = $data['manufacture_year'] ?? null;
             $car->registration_year = $data['registration_year'] ?? null;
             $car->ownership = $data['ownership'];
@@ -236,22 +261,19 @@ class CarController extends Controller
                 if ($car->image_360) deleteFiles($car->image_360);
                 $car->image_360 = uploadFiles($request, 'image_360', 'cars');
             }
-            if ($request->hasFile('gallery_images')) {
-                if ($car->gallery_images) deleteFiles($car->gallery_images);
-                $car->gallery_images = uploadFiles($request, 'gallery_images', 'cars_gallery');
-            }
+
 
             $car->save();
 
             // 3️⃣ Car Specifications
             $spec = $car->specifications ?? new CarSpecification;
             $spec->car_id = $car->id;
-            $spec->fuel_type = $data['fuel_type'] ?? null;
-            $spec->transmission = $data['transmission'] ?? null;
+            $spec->fuel_type = isset($data['fuel_type']) ? implode(',', $data['fuel_type']) : null;
+            $spec->transmission = isset($data['transmission']) ? implode(',', $data['transmission']) : null;
+            $spec->colour = isset($data['colour']) ? implode(',', $data['colour']) : null;
             $spec->engine_cc = $data['engine_cc'] ?? null;
             $spec->mileage = $data['mileage'] ?? null;
             $spec->seating_capacity = $data['seating_capacity'] ?? null;
-            $spec->colour = $data['colour'] ?? null;
             $spec->safety_ratings = $data['safety_ratings'] ?? null;
             $spec->airbags = $data['airbags'] ?? null;
             $spec->torque_id = $data['torque_id'] ?? null;
@@ -385,6 +407,130 @@ class CarController extends Controller
             return redirect()->back()->with('error', 'Failed to delete gallery image. Please try again.');
         }
     }
+
+
+    public function addLatestUpdate(Request $request, $carId)
+    {
+        $data = $request->validate([
+            'notes' => 'required|string|max:191',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $car = Car::findOrFail($carId);
+
+            // Create a new latest update record
+            $latestUpdate = new CarLatestUpdate();
+            $latestUpdate->car_id = $car->id;
+            $latestUpdate->notes = $data['notes'];
+            $latestUpdate->save();
+
+            DB::commit();
+
+            return redirect()->route('cars.latestupdates', encrypt($car->id))
+                ->with('success', 'Latest update added successfully!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
+        }
+    }
+
+    public function latestUpdateDestroy($id)
+    {
+        try {
+            $update = CarLatestUpdate::findOrFail(decrypt($id));
+            $update->delete();
+
+            return redirect()->back()->with('success', 'Latest update deleted successfully!');
+        } catch (\Exception $e) {
+            \Log::error('Latest update delete failed: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to delete latest update. Please try again.');
+        }
+    }
+
+    public function latestUpdates($id)
+    {
+        abort_if(! auth()->user()->can('cars.edit'), 403, __('User does not have the right permissions.'));
+
+        try {
+            $title = 'Latest Updates';
+            $carId = decrypt($id);
+
+            $latestUpdates = CarLatestUpdate::where('car_id', $carId)->get();
+
+            return view('admin.cars.latest-updates', compact('latestUpdates', 'title', 'carId'));
+        } catch (\Exception $e) {
+            Log::error('Car latest updates retrieval failed', ['message' => $e->getMessage()]);
+
+            return redirect()->route('cars.index')->with('error', __('Failed to retrieve latest updates.'));
+        }
+    }
+
+
+
+
+    public function addProsCons(Request $request, $carId)
+    {
+        $data = $request->validate([
+            'type' => 'required|in:pro,con',
+            'description' => 'required|string|max:191',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $car = Car::findOrFail($carId);
+
+            // Create a new pro/con record
+            $prosCons = new CarProsCons();
+            $prosCons->car_id = $car->id;
+            $prosCons->type = $data['type'];
+            $prosCons->description = $data['description'];
+            $prosCons->save();
+
+            DB::commit();
+
+            return redirect()->route('cars.pros-cons', encrypt($car->id))
+                ->with('success', ucfirst($data['type']) . ' added successfully!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
+        }
+    }
+
+    public function prosConsDestroy($id)
+    {
+        try {
+            $item = CarProsCons::findOrFail(decrypt($id));
+            $item->delete();
+
+            return redirect()->back()->with('success', ucfirst($item->type) . ' deleted successfully!');
+        } catch (\Exception $e) {
+            \Log::error('Pro/Con delete failed: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to delete. Please try again.');
+        }
+    }
+
+    public function prosCons($id)
+    {
+        abort_if(! auth()->user()->can('cars.edit'), 403, __('User does not have the right permissions.'));
+
+        try {
+            $title = 'Pros & Cons';
+            $carId = decrypt($id);
+
+            // Fetch pros and cons separately or together
+            $prosCons = CarProsCons::where('car_id', $carId)->get();
+
+            return view('admin.cars.pros-cons', compact('prosCons', 'title', 'carId'));
+        } catch (\Exception $e) {
+            Log::error('Car pros/cons retrieval failed', ['message' => $e->getMessage()]);
+
+            return redirect()->route('cars.index')->with('error', __('Failed to retrieve pros and cons.'));
+        }
+    }
+
 
 
 
